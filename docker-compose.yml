@@ -3,5 +3,6 @@ version: '2'
 services:
    openthread_border_router:
      image: bh.cr/gh_ajlennon/openthread-border-router-block
+     privileged: true
      labels:
        io.balena.features.kernel-modules: '1'
