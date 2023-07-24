@@ -3,6 +3,27 @@ version: '2'
 services:
    openthread_border_router:
      image: bh.cr/gh_ajlennon/openthread-border-router-block
+
+# TBD: Some of these don't seem to propagate through from the block
+#      Need to work out which are which...
+     devices:
+
+# You need to set the correct USB device to use for the OpenThread RCP dongle here
+       - /dev/ttyACM0:/dev/ttyACM0
+     environment:
+# You need to set the correct USB device to use for the OpenThread RCP dongle here
+       - RADIO_URL=spinel+hdlc+uart:///dev/ttyACM0
+# You need to set the correct backbone interface for routing here e.g. wlan0 or eth0
+       - BACKBONE_INTERFACE="wlan0"
+     sysctls:
+       net.ipv6.conf.all.disable_ipv6: 0
+       net.ipv4.conf.all.forwarding: 1
+       net.ipv6.conf.all.forwarding: 1
+     ports:
+       - 80:80
+     dns:
+       - 127.0.0.1
      privileged: true
+     network_mode: host
      labels:
        io.balena.features.kernel-modules: '1'
