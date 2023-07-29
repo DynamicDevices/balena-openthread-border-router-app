@@ -2,10 +2,10 @@ version: '2'
 
 services:
    openthread_border_router:
-     image: bh.cr/gh_ajlennon/openthread-border-router-block
+     image: bh.cr/gh_ajlennon/mqttsn-gateway
 
 # TBD: Some of these don't seem to propagate through from the block
-#      Need to work out which are which...
+#      Need to work out which are which....
      devices:
 
 # You need to set the correct USB device to use for the OpenThread RCP dongle here
@@ -14,7 +14,7 @@ services:
 # You need to set the correct USB device to use for the OpenThread RCP dongle here
        - RADIO_URL=spinel+hdlc+uart:///dev/ttyACM0
 # You need to set the correct backbone interface for routing here e.g. wlan0 or eth0
-       - BACKBONE_INTERFACE="wlan0"
+       - BACKBONE_INTERFACE="eth0"
      sysctls:
        net.ipv6.conf.all.disable_ipv6: 0
        net.ipv4.conf.all.forwarding: 1
@@ -24,6 +24,21 @@ services:
      dns:
        - 127.0.0.1
      privileged: true
-     network_mode: host
+     networks:
+       ipv6net:
+         ipv4_address: 172.28.0.2
+         ipv6_address: 2001:3984:3989::20
      labels:
        io.balena.features.kernel-modules: '1'
+
+networks:
+   ipv6net:
+     driver: bridge
+     enable_ipv6: true
+     ipam:
+       driver: default
+       config:
+       - subnet: 172.28.0.0/14
+         gateway: 172.28.0.1
+       - subnet: 2001:3984:3989::/64
+         gateway: 2001:3984:3989::1
